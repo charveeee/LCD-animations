@@ -7,10 +7,10 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 const int encA = 32;      
 const int encB = 33;      
 const int encSW = 25;     
-const int startBtn = 26;  
+const int startBtn = 26; 
 const int setBtn = 23;    
 
-// ---- Grid dimensions ----
+
 const int GRID_W = 16;
 const int GRID_H = 2;
 const int MAX_LEN = GRID_W * GRID_H;
@@ -31,14 +31,13 @@ bool paused = false;
 bool gameStarted = false;
 
 unsigned long lastMove = 0;
-unsigned long moveInterval = 500; 
+unsigned long moveInterval = 500;
 
 int score = 0;
 
 
 volatile int encDelta = 0;
 volatile int lastEncoded = 0;
-
 
 
 const int TURN_THRESHOLD = 4;
@@ -93,13 +92,18 @@ void setupGame() {
 void turnFromEncoder() {
   noInterrupts();
   int delta = encDelta;
-  encDelta = 0;
   interrupts();
 
   if (delta >= TURN_THRESHOLD) {
-    dir = (Direction)((dir + 1) % 4);
+    dir = (Direction)((dir + 1) % 4); 
+    noInterrupts();
+    encDelta -= TURN_THRESHOLD; 
+    interrupts();
   } else if (delta <= -TURN_THRESHOLD) {
     dir = (Direction)((dir + 3) % 4); 
+    noInterrupts();
+    encDelta += TURN_THRESHOLD;
+    interrupts();
   }
 }
 
